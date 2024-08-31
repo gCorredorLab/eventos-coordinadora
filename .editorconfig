@@ -1,0 +1,50 @@
+# @project Eventos - Coordinadora
+# @file .editorconfig
+# @description Configuración de EditorConfig para mantener un estilo de codificación consistente en el proyecto.
+# @verified SI
+# @status DONE
+# @created 28/8/2024
+# @note
+#
+# Este archivo define y mantiene un estilo de codificación consistente entre diferentes editores y entornos IDE.
+# Configura opciones como el tipo de indentación, el tamaño de la indentación, el juego de caracteres,
+# y la inserción de líneas finales.
+# Además, tiene una configuración especial para archivos Markdown.
+
+# @section Root
+# @description Indica que este es el archivo raíz de EditorConfig.
+root = true
+
+# @section Global Configuration
+# @description Configuración global aplicable a todos los archivos.
+[*]
+# @property indent_style
+# @description Define el estilo de indentación como espacios.
+indent_style = space
+
+# @property indent_size
+# @description Establece el tamaño de la indentación en 2 espacios.
+indent_size = 2
+
+# @property end_of_line
+# @description Define el carácter de fin de línea como LF (Line Feed).
+end_of_line = lf
+
+# @property charset
+# @description Especifica el juego de caracteres como UTF-8.
+charset = utf-8
+
+# @property trim_trailing_whitespace
+# @description Elimina los espacios en blanco al final de cada línea.
+trim_trailing_whitespace = true
+
+# @property insert_final_newline
+# @description Asegura que haya una línea nueva al final de cada archivo.
+insert_final_newline = true
+
+# @section Markdown Configuration
+# @description Configuración específica para archivos Markdown (*.md).
+[*.md]
+# @property trim_trailing_whitespace
+# @description No elimina los espacios en blanco al final de las líneas en archivos Markdown.
+trim_trailing_whitespace = false

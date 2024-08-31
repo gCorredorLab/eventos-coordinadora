@@ -1,0 +1,107 @@
+/**
+ * @project Eventos - Coordinadora
+ * @file tsconfig.json
+ * @description Configuración de TypeScript para el proyecto.
+ * @verified SI
+ * @status DONE
+ * @author Guillermo Corredor Soto
+ * @created 31/8/2024
+ * @note
+ *
+ * Este archivo configura las opciones del compilador TypeScript para el proyecto.
+ * Define la configuración base, las opciones del compilador y los alias de importación.
+ */
+
+{
+  /**
+   * @property compilerOptions
+   * @description Opciones del compilador TypeScript
+   * @type {Object}
+   */
+  "compilerOptions": {
+    /**
+     * @property target
+     * @description Especifica la versión de ECMAScript de salida
+     * @type {string}
+     */
+    "target": "ES2022",
+
+    /**
+     * @property module
+     * @description Especifica el sistema de módulos
+     * @type {string}
+     */
+    "module": "CommonJS",
+
+    /**
+     * @property strict
+     * @description Habilita todas las opciones de comprobación de tipo estrictas
+     * @type {boolean}
+     */
+    "strict": true,
+
+    /**
+     * @property esModuleInterop
+     * @description Habilita la interoperabilidad entre módulos CommonJS y ES
+     * @type {boolean}
+     */
+    "esModuleInterop": true,
+
+    /**
+     * @property skipLibCheck
+     * @description Omite la comprobación de tipos en archivos de declaración
+     * @type {boolean}
+     */
+    "skipLibCheck": true,
+
+    /**
+     * @property forceConsistentCasingInFileNames
+     * @description Garantiza que las referencias a los nombres de archivos tengan el uso de mayúsculas y minúsculas correcto
+     * @type {boolean}
+     */
+    "forceConsistentCasingInFileNames": true,
+
+    /**
+     * @property rootDir
+     * @description Directorio raíz de los archivos fuente
+     * @type {string}
+     */
+    "rootDir": "./src",
+
+    /**
+     * @property outDir
+     * @description Directorio de salida para los archivos compilados
+     * @type {string}
+     */
+    "outDir": "./dist",
+
+    /**
+     * @property baseUrl
+     * @description URL base para la resolución de módulos
+     * @type {string}
+     */
+    "baseUrl": "./",
+
+    /**
+     * @property paths
+     * @description Mapeo de rutas para alias de importación
+     * @type {Object.<string, string[]>}
+     */
+    "paths": {
+      "*": ["node_modules/*"]
+    }
+  },
+
+  /**
+   * @property include
+   * @description Archivos y carpetas a incluir en la compilación
+   * @type {string[]}
+   */
+  "include": ["src/**/*", "test/**/*"],
+  /**
+   * @property exclude
+   * @description Archivos y carpetas a excluir de la compilación
+   * @type {string[]}
+   */
+  "exclude": ["node_modules", "dist"]
+}
