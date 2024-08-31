@@ -12,7 +12,7 @@
  * incluyendo el inicio de sesión y la generación de tokens JWT.
  */
 
-/** Importación de dependencias */
+/** @import dependencias */
 import {FastifyInstance, FastifyRequest, FastifyReply} from "fastify";
 import {UserRepository} from "../../application/interfaces/UserRepository";
 import bcrypt from "bcryptjs";
