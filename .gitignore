@@ -1,0 +1,65 @@
+# @project Eventos - Coordinadora
+# @file .gitignore
+# @description Archivos y carpetas que deben ser ignorados por Git en el proyecto.
+# @verified SI
+# @status DONE
+# @author Guillermo Corredor Soto
+# @created 31/8/2024
+# @note
+#
+# Este archivo especifica los archivos y directorios que no deben ser rastreados por Git,
+# incluyendo archivos de configuración local, dependencias y artefactos de construcción.
+
+# @section OSX
+# @description Archivos específicos del sistema operativo macOS que deben ser ignorados.
+.DS_Store
+
+# @section Environment
+# @description Archivos de configuración de entorno que contienen variables sensibles.
+.env
+
+# @section Dependency Management
+# @description Archivos de bloqueo de dependencias generados por npm y Yarn.
+yarn.lock
+package-lock.json
+
+# @section Logs
+# @description Archivos de log generados durante la ejecución de la aplicación.
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# @section Build
+# @description Directorios y archivos generados durante el proceso de construcción.
+dist/
+build/
+
+# @section Node Modules
+# @description Directorio que contiene todas las dependencias del proyecto.
+node_modules/
+
+# @section Docker
+# @description Archivos relacionados con Docker que no deberían ser rastreados.
+docker-compose.override.yml
+.dockerignore
+
+# @section Test Coverage
+# @description Directorio que contiene los informes de cobertura de pruebas.
+coverage/
+
+# @section IDEs and Editors
+# @description Archivos de configuración de IDEs y editores que no deberían ser rastreados.
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# @section TypeScript
+# @description Directorio de salida de TypeScript.
+*.tsbuildinfo
+
+# @section Miscellaneous
+# @description Otros archivos que deberían ser ignorados.
+*.log
+*.tmp
+*.swp
