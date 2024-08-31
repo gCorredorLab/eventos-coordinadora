@@ -14,7 +14,7 @@
  * creación, obtención, actualización y eliminación.
  */
 
-/** Importación de dependencias */
+/** @import dependencias */
 import {FastifyInstance, FastifyRequest, FastifyReply} from "fastify";
 import {UserController} from "../../infrastructure/controllers/UserController";
 import {DataUserRepository} from "../../infrastructure/repositories/DataUserRepository";

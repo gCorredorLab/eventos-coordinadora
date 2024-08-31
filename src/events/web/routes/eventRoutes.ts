@@ -14,7 +14,7 @@
  * creación, obtención, actualización y eliminación. Incluye autenticación JWT.
  */
 
-/** Importación de dependencias */
+/** @import dependencias */
 import {FastifyInstance} from "fastify";
 import {EventController} from "../../infrastructure/controllers/EventController";
 import {DataEventRepository} from "../../infrastructure/repositories/DataEventRepository";
