@@ -139,29 +139,35 @@ const bulkUploadController = new UploadDataController(
  * que se incluyan en la documentación.
  */
 server.register(async (instance) => {
-  /** Rutas de carga masiva (no protegidas) */
-  uploadDataRoutes(instance, bulkUploadController);
+  /** Prefijo general para todas las rutas de la API */
+  instance.register(
+    async (apiRoutes) => {
+      /** Rutas de carga masiva (no protegidas) */
+      uploadDataRoutes(apiRoutes,  bulkUploadController);
 
-  /** Rutas no protegidas */
-  authRoutes(instance, userRepository);
+      /** Rutas no protegidas */
+      authRoutes(apiRoutes, userRepository);
 
-  /** Ruta de registro de usuario (no protegida) */
-  registerUserRoute(instance);
+      /** Ruta de registro de usuario (no protegida) */
+      registerUserRoute(apiRoutes);
 
-  /** Rutas protegidas */
-  instance.register(async (protectedRoutes) => {
-    protectedRoutes.addHook("onRequest", async (request, reply) => {
-      try {
-        await request.jwtVerify();
-      } catch (err) {
-        reply.send(err);
-      }
-    });
-    userRoutes(protectedRoutes);
-    placeRoutes(protectedRoutes);
-    eventRoutes(protectedRoutes);
-    registerRoutes(protectedRoutes);
-  });
+      /** Rutas protegidas */
+      apiRoutes.register(async (protectedRoutes) => {
+        protectedRoutes.addHook("onRequest", async (request, reply) => {
+          try {
+            await request.jwtVerify();
+          } catch (err) {
+            reply.send(err);
+          }
+        });
+        userRoutes(protectedRoutes);
+        placeRoutes(protectedRoutes);
+        eventRoutes(protectedRoutes);
+        registerRoutes(protectedRoutes);
+      });
+    },
+    {prefix: "/api"}
+  );
 });
 
 /**

@@ -52,7 +52,7 @@ Esta estructura facilita la organización del código y la separación de respon
 
 ### Prerrequisitos
 
-- Node.js (v14 o superior)
+- Node.js (v18 o superior)
 - Docker y Docker Compose
 - PostgreSQL (si se ejecuta fuera de Docker)
 
@@ -72,10 +72,22 @@ Esta estructura facilita la organización del código y la separación de respon
 3. Configurar variables de entorno:
    Crea un archivo `.env` en la raíz del proyecto y configura las variables necesarias (ver `.env.example` para referencia).
 
+      PORT=3000
+      JWT_SECRET=
+      DB_HOST=postgres
+      DB_PORT=5432
+      DB_USER=
+      DB_PASSWORD=
+      DB_NAME=
+      DOCKER_ENV=true
+      MAPBOX_ACCESS_TOKEN=
+
+
 4. Iniciar la aplicación con Docker:
    ```
    npm run docker:up
    ```
+5. Al Iniciar con Docker la base de datos y tablas se crean automaticamente.
 
 ## Scripts Disponibles
 
@@ -102,14 +114,20 @@ El proyecto incluye varios scripts útiles para el desarrollo y despliegue:
 
 La API proporciona endpoints para la gestión de usuarios, eventos, lugares y registros. Consulta la documentación de Swagger disponible en `/documentation` cuando la aplicación esté en ejecución para obtener detalles sobre los endpoints y cómo utilizarlos.
 
+Ingresar a Swagger:
+```
+http://localhost:3000/documentation
+```
+
 ## Características Principales
 
-1. Gestión de Usuarios: Registro, autenticación y gestión de perfiles.
-2. Gestión de Eventos: Creación, edición, eliminación y listado de eventos.
-3. Gestión de Lugares: Administración de lugares para eventos.
-4. Registro a Eventos: Permite a los usuarios registrarse para asistir a eventos.
-5. Integración con Mapbox: Funcionalidades geoespaciales para localización de eventos.
-6. Carga masiva de datos: Permite la carga de datos desde archivos Excel para usuarios, eventos, lugares y registros.
+1. Carga masiva de datos: Permite la carga de datos desde archivos Excel para usuarios, eventos, lugares y registros.
+2. Gestión de Usuarios: Registro, autenticación y gestión de perfiles.
+3. Gestión de Eventos: Creación, edición, eliminación y listado de eventos.
+4. Gestión de Lugares: Administración de lugares para eventos.
+5. Registro a Eventos: Permite a los usuarios registrarse para asistir a eventos.
+6. Integración con Mapbox: Funcionalidades geoespaciales para localización de eventos.
+
 
 ## Pruebas
 
@@ -122,6 +140,96 @@ npm run test
 ## Despliegue
 
 El proyecto está configurado para desplegarse fácilmente usando Docker. Utiliza los scripts Docker proporcionados para construir y desplegar la aplicación en un entorno de producción.
+
+## cURLs carga masiva
+
+Los formatos para las carga masiva hay dos formas de obtenerlos
+ - Dentro del proyecto hay una carpeta con el nombre  "xml-files" hay tendremos las 4 formas de carga masiva.
+ - Ingresando a Swagger hay un capitulo de importacion, se da click en Try it out, Execute y el server response queda el link de Download File.
+
+### Nota:
+Este es el oden de carga. esto con el fin de mantener la integridad de la base de datos.
+- Cambia las XXXXXX por la ruta del archivo
+
+1. Carga masiva de usuarios
+```
+curl --location 'http://localhost:3000/api/upload-data/users' \
+--form '=@"/XXXXXX/Downloads/user_import_template.xlsx"'
+```
+
+2. Carga masiva de lugares
+```
+curl --location 'http://localhost:3000/api/upload-data/places' \
+--form '=@"/XXXXXX/Downloads/place_import_template.xlsx"'
+```
+
+3. Carga masiva de eventos
+```
+curl --location 'http://localhost:3000/api/upload-data/events' \
+--form '=@"/XXXXXX/Downloads/event_import_template.xlsx"'
+```
+
+4. Carga masiva de registros
+```
+curl --location 'http://localhost:3000/api/upload-data/registers' \
+--form '=@"/XXXXXX/Downloads/register_import_template.xlsx"'
+```
+
+5. Carga masiva de lugares y eventos
+```
+curl --location 'http://localhost:3000/api/upload-data/places-and-events' \
+--form '=@"/XXXXXX/Downloads/event_and_place_import_template.xlsx"'
+```
+
+## cURLs Creacion de usuario y/o login
+Los usaurios se pueden registrar y después obtener el token para poder obtener permiso para uso de las rutas seguras.
+
+1. Registro de usuario
+```
+curl -X 'POST' \
+  'http://localhost:3000/api/register' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "userName": "Guillermo",
+  "userLastname": "Corredor Soto",
+  "userEmail": "gcorredorsoto@gmail.com",
+  "password": "Ab12345678*",
+  "userLatitude": 40.7128,
+  "userLongitude": -74.006
+}'
+```
+
+2. Login
+```
+curl -X 'POST' \
+  'http://localhost:3000/api/login' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "userEmail": "gcorredorsoto@gmail.com",
+  "password": "Ab12345678*"
+}'
+
+	
+Response body
+Download
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInVzZXJFbWFpbCI6Imdjb3JyZWRvcnNvdG9AZ21haWwuY29tIiwiaWF0IjoxNzI1MjA5NjAxfQ.qPD4cC-VhRpsAWk-PoN3BFoqPZu9_E2EVeRkOZf8GYc"
+}
+```
+
+## cURLs ejemplo de rutas protegidas
+Los usaurios se pueden registrar y despues obtener el token para poder obtener permiso para uso de las rutas seguras.
+
+1. Obtener usuarios en la base de datos
+```
+curl -X 'GET' \
+  'http://localhost:3000/api/users' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInVzZXJFbWFpbCI6Imdjb3JyZWRvcnNvdG9AZ21haWwuY29tIiwiaWF0IjoxNzI1MjA5NjAxfQ.qPD4cC-VhRpsAWk-PoN3BFoqPZu9_E2EVeRkOZf8GYc'
+```
+
 
 ## Licencia
 
