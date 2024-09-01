@@ -1,0 +1,65 @@
+# @project Eventos - Coordinadora
+# @file docker-compose.yml
+# @description Configuración de Docker Compose para el proyecto.
+# @verified SI
+# @status DONE
+# @author Guillermo Corredor Soto
+# @created 31/8/2024
+# @note
+#
+# Este archivo configura los servicios de Docker para el proyecto, incluyendo una base de datos
+# PostgreSQL y la API desarrollada en Node.js. Define las variables de entorno, los volúmenes
+# persistentes y la red entre los servicios.
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DOCKER_ENV=true
+      - MAPBOX_ACCESS_TOKEN=${MAPBOX_ACCESS_TOKEN}
+      - APP_EMAIL_USER=${APP_EMAIL_USER}
+      - APP_EMAIL_PSW=${APP_EMAIL_PSW}
+    env_file:
+      - .env
+    networks:
+      - eventos-coordinadora-network
+    deploy:
+      replicas: 5
+      restart_policy:
+        condition: on-failure
+
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - eventos-coordinadora-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
+
+networks:
+  eventos-coordinadora-network:
+    name: eventos-coordinadora-network
