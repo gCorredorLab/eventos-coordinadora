@@ -23,6 +23,7 @@ import {
   downloadUserTemplateHandler,
   downloadPlaceTemplateHandler,
   downloadEventTemplateHandler,
+  downloadRegisterTemplateHandler,
   downloadPlaceAndEventTemplateHandler
 } from "../../../common/utils/templateExcel";
 
@@ -95,7 +96,7 @@ export function uploadDataRoutes(server: FastifyInstance, controller: UploadData
         }
       }
     },
-    handler: downloadEventTemplateHandler
+    handler: downloadRegisterTemplateHandler
   });
 
   /** Ruta para descargar plantilla de lugares y eventos */
@@ -113,10 +114,6 @@ export function uploadDataRoutes(server: FastifyInstance, controller: UploadData
     },
     handler: downloadPlaceAndEventTemplateHandler
   });
-
-
-
-
 
   /** Ruta para subir usuarios */
   server.post("/upload-data/users", {
