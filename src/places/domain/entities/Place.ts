@@ -41,3 +41,5 @@ export class Place {
     public placeLongitude: number
   ) {}
 }
+
+export type CreatePlaceDTO = Omit<Place, "placeId">;

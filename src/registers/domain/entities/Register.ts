@@ -33,3 +33,5 @@ export class Register {
     public registerConfirmation: boolean
   ) {}
 }
+
+export type CreateRegisterDTO = Omit<Register, "registerId">;

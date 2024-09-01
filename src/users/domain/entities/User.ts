@@ -38,3 +38,5 @@ export class User {
     public userLongitude: number
   ) {}
 }
+
+export type CreateUserDTO = Omit<User, "userId">;

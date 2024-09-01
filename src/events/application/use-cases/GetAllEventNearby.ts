@@ -2,10 +2,10 @@
  * @project Eventos - Coordinadora
  * @file GetAllEventNearby.ts
  * @description Caso de uso para obtener todos los eventos con ubicaciones cercanas.
- * @verified NO
- * @status DEVELOP
- * @unitTests NO
- * @unitTestsStatus PENDING
+ * @verified SI
+ * @status DONE
+ * @unitTests SI
+ * @unitTestsStatus PASSED
  * @author Guillermo Corredor Soto
  * @created 31/8/2024
  * @note
@@ -15,9 +15,9 @@
  */
 
 /** @import dependencias */
-import { Event } from "../../domain/entities/Event";
-import { Place } from "../../../places/domain/entities/Place";
-import { EventRepository } from "../interfaces/EventRepository";
+import {Event} from "../../domain/entities/Event";
+import {Place} from "../../../places/domain/entities/Place";
+import {EventRepository} from "../interfaces/EventRepository";
 
 /** @class GetAllEventNearby */
 export class GetAllEventNearby {
@@ -32,7 +32,7 @@ export class GetAllEventNearby {
    * @returns {Promise<Array<{ event: Event, place: Place, nearbyLocations: any[] }>>}
    *          Un array con todos los eventos, sus lugares y ubicaciones cercanas
    */
-  async execute(range: number, latitude?: number, longitude?: number): Promise<Array<{ event: Event, place: Place, nearbyLocations: any[] }>> {
+  async execute(range: number, latitude?: number, longitude?: number): Promise<Array<{event: Event; place: Place; nearbyLocations: any[]}>> {
     return this.eventRepository.getAllEventNearby(range, latitude, longitude);
   }
 }

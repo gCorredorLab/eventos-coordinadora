@@ -17,7 +17,7 @@
  */
 
 /** @import dependencias */
-import {Place} from "../domain/entities/Place"; // Ajusta la ruta según la estructura de tu proyecto
+import {Place} from "../domain/entities/Place";
 
 describe("Place", () => {
   /** @test Crea una instancia de Place con todas las propiedades */

@@ -28,7 +28,7 @@ export class DataPlaceRepository implements PlaceRepository {
    * @returns {Promise<Place>} El lugar creado con su ID asignado
    * @throws {Error} Si ocurre un error en la base de datos
    */
-  async createPlace(place: Place): Promise<Place> {
+  async createPlace(place: Omit<Place, "placeId">): Promise<Place> {
     try {
       const result = await query(
         `INSERT INTO "places" ("placeUserCreateId", "placeName", "placeDescription", "placeEmail", "placePhone", "placeAddress", "placeLatitude", "placeLongitude")

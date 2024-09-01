@@ -28,7 +28,7 @@ export class DataRegisterRepository implements RegisterRepository {
    * @returns {Promise<Register>} El registro creado con su ID asignado
    * @throws {Error} Si ocurre un error en la base de datos
    */
-  async createRegister(register: Register): Promise<Register> {
+  async createRegister(register: Omit<Register, "registerId">): Promise<Register> {
     try {
       const result = await query(
         `INSERT INTO "registers" ("registerUserId", "registerEventId", "registerDate", "registerConfirmation")

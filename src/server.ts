@@ -20,6 +20,7 @@ import Fastify from "fastify";
 import swagger from "@fastify/swagger";
 import swaggerUI from "@fastify/swagger-ui";
 import jwt from "@fastify/jwt";
+import multipart from "@fastify/multipart";
 
 /** @import dependencias usuarios */
 import {authRoutes} from "./users/web/routes/authRoutes";
@@ -30,12 +31,37 @@ import {DataUserRepository} from "./users/infrastructure/repositories/DataUserRe
 import {placeRoutes} from "./places/web/routes/placeRoutes";
 import {eventRoutes} from "./events/web/routes/eventRoutes";
 import {registerRoutes} from "./registers/web/routes/registerRoutes";
+import {DataPlaceRepository} from "./places/infrastructure/repositories/DataPlaceRepository";
+import {DataEventRepository} from "./events/infrastructure/repositories/DataEventRepository";
+import {DataRegisterRepository} from "./registers/infrastructure/repositories/DataRegisterRepository";
+
+/** @import dependencias bulk upload */
+import {uploadDataRoutes} from "./uploaddata/web/routes/uploadDataRoutes";
+import {UploadDataController} from "./uploaddata/infrastructure/controllers/UploadDataController";
+import {ExcelUploadDataService} from "./uploaddata/infrastructure/services/ExcelBulkUploadService";
+import {UploadDataUsers} from "./uploaddata/application/use-cases/UploadDataUsers";
+import {UploadDataPlaces} from "./uploaddata/application/use-cases/UploadDataPlaces";
+import {UploadDataEvents} from "./uploaddata/application/use-cases/UploadDataEvents";
+import {UploadDataRegisters} from "./uploaddata/application/use-cases/UploadDataRegisters";
+import {UploadDataPlacesAndEvents} from "./uploaddata/application/use-cases/UploadDataPlacesAndEvents";
 
 /** Carga de variables de entorno */
 config();
 
 /** Creación de la instancia del servidor Fastify */
 const server = Fastify();
+
+/** Para manejar cargas de archivos en solicitudes HTTP */
+server.register(multipart, {
+  limits: {
+    fieldNameSize: 100, // Max field name size in bytes
+    fieldSize: 100, // Max field value size in bytes
+    fields: 10, // Max number of non-file fields
+    fileSize: 1000000, // For multipart forms, the max file size in bytes
+    files: 1, // Max number of file fields
+    headerPairs: 2000 // Max number of header key=>value pairs
+  }
+});
 
 /** Configuración del plugin JWT */
 server.register(jwt, {
@@ -82,8 +108,30 @@ server.register(swaggerUI, {
   transformStaticCSP: (header) => header
 });
 
-/** Inicialización del repositorio de usuarios */
+/** Inicialización de los repositorios */
 const userRepository = new DataUserRepository();
+const placeRepository = new DataPlaceRepository();
+const eventRepository = new DataEventRepository();
+const registerRepository = new DataRegisterRepository();
+
+/** Inicialización de servicios y controlador para carga masiva */
+const bulkUploadService = new ExcelUploadDataService(userRepository, placeRepository, eventRepository, registerRepository);
+
+/** Inicialización de los casos de uso de carga masiva */
+const bulkUploadUsers = new UploadDataUsers(bulkUploadService);
+const bulkUploadPlaces = new UploadDataPlaces(bulkUploadService);
+const bulkUploadEvents = new UploadDataEvents(bulkUploadService);
+const bulkUploadRegisters = new UploadDataRegisters(bulkUploadService);
+const bulkUploadPlacesAndEvents = new UploadDataPlacesAndEvents(bulkUploadService);
+
+/** Inicialización del controlador de carga masiva */
+const bulkUploadController = new UploadDataController(
+  bulkUploadUsers,
+  bulkUploadPlaces,
+  bulkUploadEvents,
+  bulkUploadRegisters,
+  bulkUploadPlacesAndEvents
+);
 
 /**
  * Registro de rutas
@@ -91,6 +139,9 @@ const userRepository = new DataUserRepository();
  * que se incluyan en la documentación.
  */
 server.register(async (instance) => {
+  /** Rutas de carga masiva (no protegidas) */
+  uploadDataRoutes(instance, bulkUploadController);
+
   /** Rutas no protegidas */
   authRoutes(instance, userRepository);
 

@@ -4,8 +4,8 @@
  * @description Configuración y manejo de la conexión a la base de datos PostgreSQL
  * @verified SI
  * @status DONE
- * @unitTests NO
- * @unitTestsStatus DEVELOP
+ * @unitTests SI
+ * @unitTestsStatus PASSED
  * @author Guillermo Corredor Soto
  * @created 31/8/2024
  * @note

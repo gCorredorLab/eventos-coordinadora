@@ -16,7 +16,7 @@
  */
 
 /** @import dependencias */
-import {Register} from "../domain/entities/Register"; // Ajusta la ruta según la estructura de tu proyecto
+import {Register} from "../domain/entities/Register";
 
 describe("Register", () => {
   /** @test Crea una instancia de Register con todas las propiedades */
