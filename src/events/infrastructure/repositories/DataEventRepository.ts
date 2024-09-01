@@ -37,7 +37,7 @@ export class DataEventRepository implements EventRepository {
    * @returns {Promise<Event>} El evento creado con su ID asignado
    * @throws {Error} Si ocurre un error en la base de datos
    */
-  async createEvent(event: Event): Promise<Event> {
+  async createEvent(event: Omit<Event, "eventId">): Promise<Event> {
     try {
       const result = await query(
         `INSERT INTO "events" ("eventUserCreateId", "eventPlaceId", "eventName", "eventDescription", "eventDate")
@@ -153,11 +153,9 @@ export class DataEventRepository implements EventRepository {
 
       const eventsWithNearbyLocations = await Promise.all(
         eventsWithPlaces.map(async ({event, place}) => {
-          const nearbyLocations = await this.mapboxUtils.getNearbyLocations(
-            latitude ?? place.placeLatitude,
-            longitude ?? place.placeLongitude,
-            range
-          );
+          const eventLatitude = place.placeLatitude;
+          const eventLongitude = place.placeLongitude;
+          const nearbyLocations = await this.mapboxUtils.getNearbyLocations(eventLatitude, eventLongitude, range);
           return {event, place, nearbyLocations};
         })
       );
@@ -188,12 +186,15 @@ export class DataEventRepository implements EventRepository {
       `);
 
       const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-      const attendanceByDay = daysOfWeek.reduce((acc, day) => {
-        acc[day] = 0;
-        return acc;
-      }, {} as Record<string, number>);
+      const attendanceByDay = daysOfWeek.reduce(
+        (acc, day) => {
+          acc[day] = 0;
+          return acc;
+        },
+        {} as Record<string, number>
+      );
 
-      result.rows.forEach(row => {
+      result.rows.forEach((row) => {
         attendanceByDay[daysOfWeek[row.day_of_week]] = parseInt(row.attendance);
       });
 

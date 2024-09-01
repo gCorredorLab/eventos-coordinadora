@@ -29,6 +29,7 @@ src/
 │   ├── utils/
 │   ├── errors/
 │   └── middleware/
+├── uploaddata/
 ├── user/
 │   ├── domain/
 │   │   └── entities/
@@ -39,9 +40,10 @@ src/
 │   │   ├── repositories/
 │   │   ├── controllers/
 │   │   └── database/
+│   ├── test/
 │   └── web/
 │       └── routes/
-└── index.ts
+└── server.ts
 ```
 
 Esta estructura facilita la organización del código y la separación de responsabilidades según los principios de Clean Architecture.

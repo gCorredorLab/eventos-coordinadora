@@ -29,7 +29,7 @@ export class DataUserRepository implements UserRepository {
    * @returns {Promise<User>} El usuario creado con su ID asignado (sin incluir la contraseña)
    * @throws {Error} Si el email ya existe o si ocurre un error en la base de datos
    */
-  async createUser(user: User): Promise<User> {
+  async createUser(user: Omit<User, "userId">): Promise<User> {
     try {
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(user.password, saltRounds);

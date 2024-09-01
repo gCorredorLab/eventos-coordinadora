@@ -13,8 +13,8 @@
  */
 
 /** @import entidades */
-import { Event } from "../../domain/entities/Event";
-import { Place } from "../../../places/domain/entities/Place";
+import {Event} from "../../domain/entities/Event";
+import {Place} from "../../../places/domain/entities/Place";
 
 /** @interface */
 export interface EventRepository {
@@ -66,5 +66,5 @@ export interface EventRepository {
    * @returns {Promise<Array<{ event: Event, place: Place, nearbyLocations: any[] }>>}
    *          Una lista de eventos con sus lugares y ubicaciones cercanas
    */
-  getAllEventNearby(range: number, latitude?: number, longitude?: number): Promise<Array<{ event: Event, place: Place, nearbyLocations: any[] }>>;
+  getAllEventNearby(range: number, latitude?: number, longitude?: number): Promise<Array<{event: Event; place: Place; nearbyLocations: any[]}>>;
 }

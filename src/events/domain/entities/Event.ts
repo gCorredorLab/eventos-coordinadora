@@ -36,3 +36,5 @@ export class Event {
     public eventDate: Date
   ) {}
 }
+
+export type CreateEventDTO = Omit<Event, "eventId">;

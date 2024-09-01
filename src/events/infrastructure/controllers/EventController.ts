@@ -16,14 +16,14 @@
  */
 
 /** @import dependencias */
-import { FastifyRequest, FastifyReply } from "fastify";
-import { Event } from "../../domain/entities/Event";
-import { CreateEvent } from "../../application/use-cases/CreateEvent";
-import { GetAllEvents } from "../../application/use-cases/GetAllEvents";
-import { GetEvent } from "../../application/use-cases/GetEvent";
-import { UpdateEvent } from "../../application/use-cases/UpdateEvent";
-import { DeleteEvent } from "../../application/use-cases/DeleteEvent";
-import { GetAllEventNearby } from "../../application/use-cases/GetAllEventNearby";
+import {FastifyRequest, FastifyReply} from "fastify";
+import {Event} from "../../domain/entities/Event";
+import {CreateEvent} from "../../application/use-cases/CreateEvent";
+import {GetAllEvents} from "../../application/use-cases/GetAllEvents";
+import {GetEvent} from "../../application/use-cases/GetEvent";
+import {UpdateEvent} from "../../application/use-cases/UpdateEvent";
+import {DeleteEvent} from "../../application/use-cases/DeleteEvent";
+import {GetAllEventNearby} from "../../application/use-cases/GetAllEventNearby";
 
 /** Definición de tipos para los parámetros de las rutas */
 interface EventParams {
@@ -61,7 +61,7 @@ export class EventController {
       reply.code(201).send(event);
     } catch (error) {
       console.error("Error in createEventHandler:", error);
-      reply.code(500).send({ error: "Error al crear el evento" });
+      reply.code(500).send({error: "Error al crear el evento"});
     }
   }
 
@@ -78,7 +78,7 @@ export class EventController {
       reply.send(events);
     } catch (error) {
       console.error("Error in getAllEventsHandler:", error);
-      reply.code(500).send({ error: "Error al obtener los eventos" });
+      reply.code(500).send({error: "Error al obtener los eventos"});
     }
   }
 
@@ -96,11 +96,11 @@ export class EventController {
       if (event) {
         reply.send(event);
       } else {
-        reply.code(404).send({ error: "Evento no encontrado" });
+        reply.code(404).send({error: "Evento no encontrado"});
       }
     } catch (error) {
       console.error("Error in getEventHandler:", error);
-      reply.code(500).send({ error: "Error al obtener el evento" });
+      reply.code(500).send({error: "Error al obtener el evento"});
     }
   }
 
@@ -119,7 +119,7 @@ export class EventController {
       reply.send(updatedEvent);
     } catch (error) {
       console.error("Error in updateEventHandler:", error);
-      reply.code(500).send({ error: "Error al actualizar el evento" });
+      reply.code(500).send({error: "Error al actualizar el evento"});
     }
   }
 
@@ -137,7 +137,7 @@ export class EventController {
       reply.code(204).send();
     } catch (error) {
       console.error("Error in deleteEventHandler:", error);
-      reply.code(500).send({ error: "Error al eliminar el evento" });
+      reply.code(500).send({error: "Error al eliminar el evento"});
     }
   }
 
@@ -148,12 +148,9 @@ export class EventController {
    * @param {FastifyReply} reply - La respuesta HTTP
    * @returns {Promise<void>}
    */
-  async getAllEventNearbyHandler(
-    request: FastifyRequest<{Querystring: NearbyQueryString}>,
-    reply: FastifyReply
-  ): Promise<void> {
+  async getAllEventNearbyHandler(request: FastifyRequest<{Querystring: NearbyQueryString}>, reply: FastifyReply): Promise<void> {
     try {
-      const { range: rangeStr, latitude: latStr, longitude: lonStr } = request.query;
+      const {range: rangeStr, latitude: latStr, longitude: lonStr} = request.query;
       let range: number = 1000; // Default value
       let latitude: number | undefined;
       let longitude: number | undefined;
@@ -161,7 +158,7 @@ export class EventController {
       if (rangeStr) {
         range = Number(rangeStr);
         if (isNaN(range) || range <= 0) {
-          reply.code(400).send({ error: "El rango debe ser un número positivo" });
+          reply.code(400).send({error: "El rango debe ser un número positivo"});
           return;
         }
       }
@@ -170,7 +167,7 @@ export class EventController {
         latitude = Number(latStr);
         longitude = Number(lonStr);
         if (isNaN(latitude) || isNaN(longitude)) {
-          reply.code(400).send({ error: "La latitud y longitud deben ser números válidos" });
+          reply.code(400).send({error: "La latitud y longitud deben ser números válidos"});
           return;
         }
       }
@@ -179,7 +176,7 @@ export class EventController {
       reply.send(eventsWithNearbyLocations);
     } catch (error) {
       console.error("Error in getAllEventNearbyHandler:", error);
-      reply.code(500).send({ error: "Error al obtener los eventos con ubicaciones cercanas" });
+      reply.code(500).send({error: "Error al obtener los eventos con ubicaciones cercanas"});
     }
   }
 }
