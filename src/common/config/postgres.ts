@@ -13,8 +13,8 @@
  */
 
 /** @import librerias */
-import {Pool, QueryResult} from "pg";
 import dotenv from "dotenv";
+import {Pool, QueryResult} from "pg";
 
 /** @load variables de entorno */
 dotenv.config();

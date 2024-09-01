@@ -12,15 +12,24 @@
  *
  * Este archivo implementa la interfaz EventRepository utilizando PostgreSQL como base de datos.
  * Utiliza la función `query` del módulo de configuración de postgres para ejecutar las consultas.
+ * Incluye funcionalidad para obtener eventos cercanos utilizando Mapbox.
  */
 
 /** @import dependencias */
 import {query} from "../../../common/config/postgres";
 import {Event} from "../../domain/entities/Event";
+import {Place} from "../../../places/domain/entities/Place";
 import {EventRepository} from "../../application/interfaces/EventRepository";
+import MapboxUtils from "../../../common/utils/MapboxUtils";
 
 /** @class DataEventRepository */
 export class DataEventRepository implements EventRepository {
+  private mapboxUtils: MapboxUtils;
+
+  constructor() {
+    this.mapboxUtils = new MapboxUtils();
+  }
+
   /**
    * @method createEvent
    * @description Crea un nuevo evento en la base de datos
@@ -50,8 +59,13 @@ export class DataEventRepository implements EventRepository {
    * @returns {Promise<Event[]>} Un array con todos los eventos
    */
   async getAllEvents(): Promise<Event[]> {
-    const result = await query('SELECT * FROM "events"');
-    return result.rows.map(this.mapEventFromDatabase);
+    try {
+      const result = await query('SELECT * FROM "events"');
+      return result.rows.map(this.mapEventFromDatabase);
+    } catch (error) {
+      console.error("Error al obtener todos los eventos:", error);
+      throw new Error("Ocurrió un error al obtener todos los eventos");
+    }
   }
 
   /**
@@ -61,9 +75,14 @@ export class DataEventRepository implements EventRepository {
    * @returns {Promise<Event | null>} El evento encontrado o null si no existe
    */
   async getEventById(eventId: number): Promise<Event | null> {
-    const result = await query('SELECT * FROM "events" WHERE "eventId" = $1', [eventId]);
-    if (result.rows.length === 0) return null;
-    return this.mapEventFromDatabase(result.rows[0]);
+    try {
+      const result = await query('SELECT * FROM "events" WHERE "eventId" = $1', [eventId]);
+      if (result.rows.length === 0) return null;
+      return this.mapEventFromDatabase(result.rows[0]);
+    } catch (error) {
+      console.error(`Error al obtener el evento con ID ${eventId}:`, error);
+      throw new Error(`Ocurrió un error al obtener el evento con ID ${eventId}`);
+    }
   }
 
   /**
@@ -74,14 +93,19 @@ export class DataEventRepository implements EventRepository {
    * @throws {Error} Si el evento no se encuentra
    */
   async updateEvent(event: Event): Promise<Event> {
-    const result = await query(
-      `UPDATE "events" SET "eventName" = $1, "eventDescription" = $2, "eventDate" = $3
-       WHERE "eventId" = $4
-       RETURNING *`,
-      [event.eventName, event.eventDescription, event.eventDate, event.eventId]
-    );
-    if (result.rows.length === 0) throw new Error("Event not found");
-    return this.mapEventFromDatabase(result.rows[0]);
+    try {
+      const result = await query(
+        `UPDATE "events" SET "eventName" = $1, "eventDescription" = $2, "eventDate" = $3
+         WHERE "eventId" = $4
+         RETURNING *`,
+        [event.eventName, event.eventDescription, event.eventDate, event.eventId]
+      );
+      if (result.rows.length === 0) throw new Error("Event not found");
+      return this.mapEventFromDatabase(result.rows[0]);
+    } catch (error) {
+      console.error(`Error al actualizar el evento con ID ${event.eventId}:`, error);
+      throw new Error(`Ocurrió un error al actualizar el evento con ID ${event.eventId}`);
+    }
   }
 
   /**
@@ -92,8 +116,92 @@ export class DataEventRepository implements EventRepository {
    * @throws {Error} Si el evento no se encuentra
    */
   async deleteEvent(eventId: number): Promise<void> {
-    const result = await query('DELETE FROM "events" WHERE "eventId" = $1', [eventId]);
-    if (result.rowCount === 0) throw new Error("Event not found");
+    try {
+      const result = await query('DELETE FROM "events" WHERE "eventId" = $1', [eventId]);
+      if (result.rowCount === 0) throw new Error("Event not found");
+    } catch (error) {
+      console.error(`Error al eliminar el evento con ID ${eventId}:`, error);
+      throw new Error(`Ocurrió un error al eliminar el evento con ID ${eventId}`);
+    }
+  }
+
+  /**
+   * @method getAllEventNearby
+   * @description Obtiene todos los eventos con sus ubicaciones cercanas
+   * @param {number} range - El rango en metros para buscar ubicaciones cercanas
+   * @param {number} [latitude] - Latitud opcional del punto de referencia
+   * @param {number} [longitude] - Longitud opcional del punto de referencia
+   * @returns {Promise<Array<{ event: Event, place: Place, nearbyLocations: any[] }>>}
+   * @throws {Error} Si ocurre un error al obtener los eventos o las ubicaciones cercanas
+   */
+  async getAllEventNearby(
+    range: number,
+    latitude?: number,
+    longitude?: number
+  ): Promise<Array<{event: Event; place: Place; nearbyLocations: any[]}>> {
+    try {
+      const result = await query(`
+        SELECT e.*, p.*
+        FROM "events" e
+        JOIN "places" p ON e."eventPlaceId" = p."placeId"
+      `);
+
+      const eventsWithPlaces = result.rows.map((row) => ({
+        event: this.mapEventFromDatabase(row),
+        place: this.mapPlaceFromDatabase(row)
+      }));
+
+      const eventsWithNearbyLocations = await Promise.all(
+        eventsWithPlaces.map(async ({event, place}) => {
+          const nearbyLocations = await this.mapboxUtils.getNearbyLocations(
+            latitude ?? place.placeLatitude,
+            longitude ?? place.placeLongitude,
+            range
+          );
+          return {event, place, nearbyLocations};
+        })
+      );
+
+      return eventsWithNearbyLocations;
+    } catch (error) {
+      console.error("Error al obtener eventos con ubicaciones cercanas:", error);
+      throw new Error("Ocurrió un error al obtener eventos con ubicaciones cercanas");
+    }
+  }
+
+  async getAttendanceByDayOfWeek(): Promise<Record<string, number>> {
+    try {
+      const result = await query(`
+        SELECT
+          EXTRACT(DOW FROM e."eventDate") as day_of_week,
+          COUNT(r."registerId") as attendance
+        FROM
+          "events" e
+        LEFT JOIN
+          "registers" r ON e."eventId" = r."registerEventId"
+        WHERE
+          r."registerConfirmation" = true
+        GROUP BY
+          EXTRACT(DOW FROM e."eventDate")
+        ORDER BY
+          day_of_week
+      `);
+
+      const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const attendanceByDay = daysOfWeek.reduce((acc, day) => {
+        acc[day] = 0;
+        return acc;
+      }, {} as Record<string, number>);
+
+      result.rows.forEach(row => {
+        attendanceByDay[daysOfWeek[row.day_of_week]] = parseInt(row.attendance);
+      });
+
+      return attendanceByDay;
+    } catch (error) {
+      console.error("Error al calcular la asistencia por día de la semana:", error);
+      throw new Error("Ocurrió un error al calcular la asistencia por día de la semana");
+    }
   }
 
   /**
@@ -111,6 +219,27 @@ export class DataEventRepository implements EventRepository {
       eventName: dbEvent.eventName,
       eventDescription: dbEvent.eventDescription,
       eventDate: new Date(dbEvent.eventDate)
+    };
+  }
+
+  /**
+   * @method mapPlaceFromDatabase
+   * @description Mapea los datos del lugar desde la base de datos al modelo de la aplicación
+   * @param {any} dbPlace - Los datos del lugar como vienen de la base de datos
+   * @returns {Place} El lugar mapeado al modelo de la aplicación
+   * @private
+   */
+  private mapPlaceFromDatabase(dbPlace: any): Place {
+    return {
+      placeId: dbPlace.placeId,
+      placeUserCreateId: dbPlace.placeUserCreateId,
+      placeName: dbPlace.placeName,
+      placeDescription: dbPlace.placeDescription,
+      placeEmail: dbPlace.placeEmail,
+      placePhone: dbPlace.placePhone,
+      placeAddress: dbPlace.placeAddress,
+      placeLatitude: dbPlace.placeLatitude,
+      placeLongitude: dbPlace.placeLongitude
     };
   }
 }

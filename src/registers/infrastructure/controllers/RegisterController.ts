@@ -4,7 +4,10 @@
  * @description Controlador para manejar las solicitudes relacionadas con la entidad Register.
  * @verified SI
  * @status DONE
- * @created 29/8/2024
+ * @unitTests SI
+ * @unitTestsStatus PASSED
+ * @author Guillermo Corredor Soto
+ * @created 31/8/2024
  * @note
  *
  * Este controlador maneja las solicitudes HTTP relacionadas con los registros,
