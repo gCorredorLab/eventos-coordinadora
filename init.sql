@@ -58,5 +58,3 @@ CREATE TABLE "registers" (
     "registerDate" TIMESTAMP NOT NULL,
     "registerConfirmation" BOOLEAN NOT NULL
 );
-
--- PROVICIONAL

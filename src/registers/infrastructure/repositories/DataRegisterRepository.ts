@@ -11,13 +11,20 @@
  * @note
  *
  * Este archivo implementa la interfaz RegisterRepository utilizando PostgreSQL como base de datos.
- * Utiliza la función `query` del módulo de configuración de postgres para ejecutar las consultas.
+ * Utiliza la función `query` del módulo de configuración de dbConfig para ejecutar las consultas.
  */
 
+/** @import librerias */
+import dotenv from "dotenv";
+
 /** @import dependencias */
-import {query} from "../../../common/config/postgres";
+import {query} from "../../../common/config/dbConfig";
+import {createEmailTransporter} from "../../../common/config/emailConfig";
 import {Register} from "../../domain/entities/Register";
 import {RegisterRepository} from "../../application/interfaces/RegisterRepository";
+
+/** @load variables de entorno */
+dotenv.config();
 
 /** @class DataRegisterRepository */
 export class DataRegisterRepository implements RegisterRepository {
@@ -29,7 +36,16 @@ export class DataRegisterRepository implements RegisterRepository {
    * @throws {Error} Si ocurre un error en la base de datos
    */
   async createRegister(register: Omit<Register, "registerId">): Promise<Register> {
+    /** @nota Crea el transporter del envio de mail */
+    const transporter = createEmailTransporter();
+
     try {
+      const resultEmail = await query(
+        `SELECT "userId", "userName", "userLastname", "userEmail", "password", "userLatitude", "userLongitude"
+         FROM "users" WHERE "userId" = $1`,
+        [register.registerUserId]
+      );
+
       const result = await query(
         `INSERT INTO "registers" ("registerUserId", "registerEventId", "registerDate", "registerConfirmation")
          VALUES ($1, $2, $3, $4)
@@ -37,6 +53,17 @@ export class DataRegisterRepository implements RegisterRepository {
         [register.registerUserId, register.registerEventId, register.registerDate, register.registerConfirmation]
       );
 
+      if (resultEmail.rows.length > 0) {
+        console.log("user email: ", resultEmail.rows[0].userEmail);
+        const mailOptions = {
+          from: process.env.APP_EMAIL_USER,
+          to: resultEmail.rows[0].userEmail,
+          subject: "Registro al evento",
+          text: "Se a registrado con exito su participacion al evento!"
+        };
+
+        await transporter.sendMail(mailOptions);
+      }
       return this.mapRegisterFromDatabase(result.rows[0]);
     } catch (error: any) {
       console.error("Error al crear el registro:", error);

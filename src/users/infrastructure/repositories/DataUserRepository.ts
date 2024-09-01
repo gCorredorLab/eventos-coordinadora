@@ -11,11 +11,11 @@
  * @note
  *
  * Esta clase implementa la interfaz UserRepository utilizando PostgreSQL como base de datos.
- * Utiliza la función query del módulo de configuración de postgres para ejecutar las consultas.
+ * Utiliza la función query del módulo de configuración de dbConfig para ejecutar las consultas.
  */
 
 /** @import dependencias */
-import {query} from "../../../common/config/postgres";
+import {query} from "../../../common/config/dbConfig";
 import {User} from "../../domain/entities/User";
 import {UserRepository} from "../../application/interfaces/UserRepository";
 import bcrypt from "bcryptjs";

@@ -27,6 +27,8 @@ services:
       - DB_NAME=${DB_NAME}
       - DOCKER_ENV=true
       - MAPBOX_ACCESS_TOKEN=${MAPBOX_ACCESS_TOKEN}
+      - APP_EMAIL_USER=${APP_EMAIL_USER}
+      - APP_EMAIL_PSW=${APP_EMAIL_PSW}
     env_file:
       - .env
     networks:
