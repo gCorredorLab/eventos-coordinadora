@@ -11,11 +11,11 @@
  * @note
  *
  * Esta clase implementa la interfaz PlaceRepository utilizando PostgreSQL como base de datos.
- * Utiliza la función query del módulo de configuración de postgres para ejecutar las consultas.
+ * Utiliza la función query del módulo de configuración de dbConfig para ejecutar las consultas.
  */
 
 /** @import dependencias */
-import {query} from "../../../common/config/postgres";
+import {query} from "../../../common/config/dbConfig";
 import {Place} from "../../domain/entities/Place";
 import {PlaceRepository} from "../../application/interfaces/PlaceRepository";
 

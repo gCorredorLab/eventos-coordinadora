@@ -11,12 +11,12 @@
  * @note
  *
  * Este archivo implementa la interfaz EventRepository utilizando PostgreSQL como base de datos.
- * Utiliza la función `query` del módulo de configuración de postgres para ejecutar las consultas.
+ * Utiliza la función `query` del módulo de configuración de dbConfig para ejecutar las consultas.
  * Incluye funcionalidad para obtener eventos cercanos utilizando Mapbox.
  */
 
 /** @import dependencias */
-import {query} from "../../../common/config/postgres";
+import {query} from "../../../common/config/dbConfig";
 import {Event} from "../../domain/entities/Event";
 import {Place} from "../../../places/domain/entities/Place";
 import {EventRepository} from "../../application/interfaces/EventRepository";

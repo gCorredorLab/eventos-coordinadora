@@ -1,6 +1,6 @@
 /**
  * @project Eventos - Coordinadora
- * @file postgres.ts
+ * @file dbConfig.ts
  * @description Configuración y manejo de la conexión a la base de datos PostgreSQL
  * @verified SI
  * @status DONE
@@ -42,8 +42,8 @@ export const query = async (text: string, params?: any[]): Promise<QueryResult> 
     const result = await pool.query(text, params);
     return result;
   } catch (error: any) {
-    console.error(`🚀 ---> postgres.ts ~ Error ejecutando la consulta - msg:`, error.message);
-    console.error(`🚀 ---> postgres.ts ~ Error ejecutando la consulta - all:`, JSON.stringify(error, null, 2));
+    console.error(`🚀 ---> dbConfig.ts ~ Error ejecutando la consulta - msg:`, error.message);
+    console.error(`🚀 ---> dbConfig.ts ~ Error ejecutando la consulta - all:`, JSON.stringify(error, null, 2));
     throw new Error(`Error ejecutando la consulta: ${error.message}`);
   }
 };

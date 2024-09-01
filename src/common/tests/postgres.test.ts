@@ -17,7 +17,7 @@
 import {Pool} from "pg";
 
 /** @import dependencias necesarias */
-import {query} from "../config/postgres";
+import {query} from "../config/dbConfig";
 
 /** @mock Mock de la clase `Pool` de `pg` para las pruebas */
 jest.mock("pg", () => {
