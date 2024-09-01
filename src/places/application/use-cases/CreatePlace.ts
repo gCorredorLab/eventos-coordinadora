@@ -4,8 +4,8 @@
  * @description Caso de uso para crear un nuevo lugar.
  * @verified SI
  * @status DONE
- * @unitTests NO
- * @unitTestsStatus DEVELOP
+ * @unitTests SI
+ * @unitTestsStatus PASSED
  * @author Guillermo Corredor Soto
  * @created 31/8/2024
  * @note

@@ -4,8 +4,8 @@
  * @description Interfaz que define las operaciones de repositorio para la entidad Event
  * @verified SI
  * @status DONE
- * @unitTests NO
- * @unitTestsStatus DEVELOP
+ * @unitTests SI
+ * @unitTestsStatus PASSED
  * @author Guillermo Corredor Soto
  * @created 31/8/2024
  * @note
@@ -13,7 +13,8 @@
  */
 
 /** @import entidades */
-import {Event} from "../../domain/entities/Event";
+import { Event } from "../../domain/entities/Event";
+import { Place } from "../../../places/domain/entities/Place";
 
 /** @interface */
 export interface EventRepository {
@@ -55,4 +56,15 @@ export interface EventRepository {
    * @returns {Promise<void>}
    */
   deleteEvent(eventId: number): Promise<void>;
+
+  /**
+   * @method getAllEventNearby
+   * @description Obtiene todos los eventos con sus ubicaciones cercanas
+   * @param {number} range - El rango en metros para buscar ubicaciones cercanas
+   * @param {number} [latitude] - Latitud opcional del punto de referencia para la búsqueda
+   * @param {number} [longitude] - Longitud opcional del punto de referencia para la búsqueda
+   * @returns {Promise<Array<{ event: Event, place: Place, nearbyLocations: any[] }>>}
+   *          Una lista de eventos con sus lugares y ubicaciones cercanas
+   */
+  getAllEventNearby(range: number, latitude?: number, longitude?: number): Promise<Array<{ event: Event, place: Place, nearbyLocations: any[] }>>;
 }
