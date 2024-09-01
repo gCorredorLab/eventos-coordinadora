@@ -1,0 +1,35 @@
+# @project Eventos - Coordinadora
+# @file .prettierignore
+# @description Archivos y carpetas que deben ser ignorados por Prettier durante el formateo.
+# @verified SI
+# @status DONE
+# @author Guillermo Corredor Soto
+# @created 31/8/2024
+# @note
+#
+# Este archivo especifica los archivos y directorios que no deben ser formateados por Prettier,
+# incluyendo archivos generados, dependencias y otros archivos que no requieren formateo.
+
+# @section Node Modules
+# @description Directorio que contiene todas las dependencias del proyecto.
+node_modules
+
+# @section Distribution
+# @description Directorio que contiene los archivos de distribución del proyecto.
+dist
+
+# @section Hidden Files
+# @description Ignora todos los archivos ocultos que empiezan con un punto.
+.*
+
+# @section Vendor
+# @description Directorio comúnmente utilizado para dependencias externas.
+vendor
+
+# @section Test Coverage
+# @description Directorio que contiene los informes de cobertura de pruebas.
+coverage
+
+# @section Documentation
+# @description Archivo de registro de cambios, que no requiere formateo.
+CHANGELOG.md
