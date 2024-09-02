@@ -230,6 +230,11 @@ curl -X 'GET' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInVzZXJFbWFpbCI6Imdjb3JyZWRvcnNvdG9AZ21haWwuY29tIiwiaWF0IjoxNzI1MjA5NjAxfQ.qPD4cC-VhRpsAWk-PoN3BFoqPZu9_E2EVeRkOZf8GYc'
 ```
 
+## Videos:
+
+Video 1: https://youtu.be/suflCRvEdsw
+Video 2: https://youtu.be/f2H9w3xL-Ls
+
 
 ## Licencia
 
